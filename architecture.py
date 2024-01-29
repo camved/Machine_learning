@@ -8,6 +8,9 @@ from Image import Image2
 from IPython.display import Image, display
 import os
 from os import listdir
+from PIL import Image
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import MultinomialNB
 
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
@@ -21,7 +24,17 @@ input = an image (jpg, png, gif)
 output = a new representation of the image
 """    
 def raw_image_to_representation(image, representation):
-    return None
+    img = Image.open(image)
+    match representation:
+        case 'HC':
+            return img.histogram()
+        case 'PX':
+            return img.convert("RGB").getdata()
+        case 'GC':
+            return img.convert("L").getdata()
+        case _:
+            print("Representation not yet implmented")
+            exit -1
 
 """
 Returns a relevant structure embedding train images described according to the 
@@ -60,14 +73,16 @@ def load_transform_label_train_dataset(directory,representation):
         print(label)
 
         for images in os.listdir(folder_path):
+            images_path = folder_path + "\\"+ images
             images_name = os.path.splitext(images)[0]
-            images_representation = raw_image_to_representation(representation)
+            images_representation = raw_image_to_representation(images_path,representation)
             image = Image2(images_name,images_representation,label)
+            dataset.append(image)
 
             
-    return None
+    return dataset
 
-load_transform_label_train_dataset(r"..\Machine_learning\data\Data") 
+print(load_transform_label_train_dataset(r"..\Machine_learning\data\Data", 'HC'))
     
 """
 Returns a relevant structure embedding test images described according to the 
@@ -85,7 +100,18 @@ output = a relevant structure, preferably the same chosen for function load_tran
 -- while be used later in the project
 """
 def load_transform_test_dataset(directory, representation):
-    return None
+    testset = []
+
+    for images in os.listdir(directory):
+            
+            images_path = directory + "\\" + images
+            images_name = os.path.splitext(images)[0]
+            images_representation = raw_image_to_representation(images_path,representation)
+            images_label = None
+            image = Image2(images_name,images_representation,images_label)
+            testset.append(image)
+
+    return testset
 
 """
 Learn a model (function) from a pre-computed representation of the dataset, using the algorithm 
