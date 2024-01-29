@@ -7,6 +7,7 @@ L3 Informatique, 2023/24
 from PIL import Image
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
 -> representation can be (to extend) 
@@ -88,11 +89,13 @@ def learn_model_from_dataset(train_dataset, algo_dico):
         case 'decision tree':
             model = DecisionTreeClassifier(max_depth=algo_dico.max_depth,min_samples_split=algo_dico.min_samples_split)
         case 'multinomial naive bayes':
-            model = 
+            model = MultinomialNB(force_alpha=algo_dico.force_alpha)
+        case _:
+            print("Algo not implemented")
+            exit -1
+    model.fit(X,Y)
 
-
-
-    return model
+    return model,algo_dico
 
 """
 Given one example (previously loaded with its name and representation),
@@ -103,8 +106,7 @@ output = the label of that one data (+1 or -1)
 -- uses the model learned by function learn_model_from_dataset
 """
 def predict_example_label(example, model):
-    label = 1  # could be -1
-    return label
+    return model.predict(example)
 
 
 """
@@ -115,7 +117,9 @@ input = a structure embedding all transformed data to a representation, and a mo
 output =  a structure that associates a label to each identified data (image) of the input dataset
 """
 def predict_sample_label(dataset, model):
-    predictions = None
+    predictions = []
+    for image_to_predict in dataset : 
+        predictions.append((image_to_predict.name,model.predict(image_to_predict)))
     return predictions
 
 """
@@ -130,8 +134,16 @@ these details to be transmitted along the pipeline.
 input = where to save the predictions, structure embedding the dataset
 output =  OK if the file has been saved, not OK if not
 """
-def write_predictions(directory, filename, predictions):
-    return None
+def write_predictions(directory, filename, predictions,algo_dico):
+    try :
+        file = open(f"{directory}/{filename}")
+        file.write(str(algo_dico))
+        for prediction in predictions:
+            file.writelines(f"{prediction[0]} {prediction[1]}")
+        file.close()
+        print("OK")
+    except:
+        print("Not Ok")
 
 """
 Estimates the accuracy of a previously learned model using train data, 
@@ -143,6 +155,7 @@ output =  The score of success (betwwen 0 and 1, the higher the better, scores u
 are worst than random guess)
 """
 def estimate_model_score(train_dataset, algo_dico, k):
+
     return None
 
     
