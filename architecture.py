@@ -8,6 +8,11 @@ from PIL import Image
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
+from Image import Image2
+from IPython.display import Image, display
+import os
+from os import listdir
+
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
 -> representation can be (to extend) 
@@ -50,9 +55,35 @@ This structure will later be used to learn a model (function learn_model_from_da
 -- uses function raw_image_to_representation
 """
 def load_transform_label_train_dataset(directory, representation):
-    
 
-    return None
+    dataset = []
+    
+    for folder in os.listdir(directory) : 
+        labelname = os.path.splitext(folder)[0]
+        print(labelname)
+        print(os.path.splitext(folder))
+        print(os.listdir(directory))
+        
+        folder_path = directory+"\\" + labelname
+
+        if labelname == 'Mer' :
+            label = 1
+        else :
+            label = -1
+
+        print(label)
+
+        for images in os.listdir(folder_path):
+            images_path = folder_path + "\\"+ images
+            images_name = os.path.splitext(images)[0]
+            images_representation = raw_image_to_representation(images_path,representation)
+            image = Image2(images_name,images_representation,label)
+            dataset.append(image)
+            print(image)
+
+            
+    return dataset
+
     
     
 """
@@ -71,7 +102,19 @@ output = a relevant structure, preferably the same chosen for function load_tran
 -- while be used later in the project
 """
 def load_transform_test_dataset(directory, representation):
-    return None
+
+    testset = []
+
+    for images in os.listdir(directory):
+            
+            images_path = directory + "\\" + images
+            images_name = os.path.splitext(images)[0]
+            images_representation = raw_image_to_representation(images_path,representation)
+            images_label = None
+            image = Image2(images_name,images_representation,images_label)
+            testset.append(image)
+
+    return testset
 
 """
 Learn a model (function) from a pre-computed representation of the dataset, using the algorithm 
