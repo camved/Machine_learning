@@ -4,6 +4,7 @@
 @author: cecile capponi, AMU
 L3 Informatique, 2023/24
 """
+from Image import Image
 
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
