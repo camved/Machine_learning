@@ -1,4 +1,4 @@
-class Image :
+class Image2 :
     
     def __init__(self,name,representation,label) :
 

@@ -4,7 +4,10 @@
 @author: cecile capponi, AMU
 L3 Informatique, 2023/24
 """
-from Image import Image
+from Image import Image2
+from IPython.display import Image, display
+import os
+from os import listdir
 
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
@@ -18,7 +21,6 @@ input = an image (jpg, png, gif)
 output = a new representation of the image
 """    
 def raw_image_to_representation(image, representation):
-
     return None
 
 """
@@ -38,9 +40,34 @@ namely its name, its representation and its label)
 This structure will later be used to learn a model (function learn_model_from_dataset)
 -- uses function raw_image_to_representation
 """
-def load_transform_label_train_dataset(directory, representation):
-    return None
+def load_transform_label_train_dataset(directory,representation):
+
+    dataset = []
     
+    for folder in os.listdir(directory) : 
+        labelname = os.path.splitext(folder)[0]
+        print(labelname)
+        print(os.path.splitext(folder))
+        print(os.listdir(directory))
+        
+        folder_path = directory+"\\" + labelname
+
+        if labelname == 'Mer' :
+            label = 1
+        else :
+            label = -1
+
+        print(label)
+
+        for images in os.listdir(folder_path):
+            images_name = os.path.splitext(images)[0]
+            images_representation = raw_image_to_representation(representation)
+            image = Image2(images_name,images_representation,label)
+
+            
+    return None
+
+load_transform_label_train_dataset(r"..\Machine_learning\data\Data") 
     
 """
 Returns a relevant structure embedding test images described according to the 
