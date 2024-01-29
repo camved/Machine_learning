@@ -17,6 +17,7 @@ input = an image (jpg, png, gif)
 output = a new representation of the image
 """    
 def raw_image_to_representation(image, representation):
+
     return None
 
 """
