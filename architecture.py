@@ -4,6 +4,7 @@
 @author: cecile capponi, AMU
 L3 Informatique, 2023/24
 """
+from PIL import Image
 
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
@@ -17,8 +18,17 @@ input = an image (jpg, png, gif)
 output = a new representation of the image
 """    
 def raw_image_to_representation(image, representation):
-
-    return None
+    img = Image.open(image)
+    match representation:
+        case 'HC':
+            return img.histogram()
+        case 'PX':
+            return img.convert("RGB").getdata()
+        case 'GC':
+            return img.convert("L").getdata()
+        case _:
+            print("Representation not yet implmented")
+            exit -1
 
 """
 Returns a relevant structure embedding train images described according to the 
@@ -38,6 +48,8 @@ This structure will later be used to learn a model (function learn_model_from_da
 -- uses function raw_image_to_representation
 """
 def load_transform_label_train_dataset(directory, representation):
+    
+
     return None
     
     
