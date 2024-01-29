@@ -5,7 +5,8 @@
 L3 Informatique, 2023/24
 """
 from PIL import Image
-
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import MultinomialNB
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
 -> representation can be (to extend) 
@@ -81,7 +82,16 @@ input = transformed labelled dataset, the used learning algo and its hyper-param
 output =  a model fit with data
 """
 def learn_model_from_dataset(train_dataset, algo_dico):
-    model = None
+    X = train_dataset 
+    Y = [-1,1]
+    match algo_dico.algo:
+        case 'decision tree':
+            model = DecisionTreeClassifier(max_depth=algo_dico.max_depth,min_samples_split=algo_dico.min_samples_split)
+        case 'multinomial naive bayes':
+            model = 
+
+
+
     return model
 
 """
