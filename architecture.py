@@ -4,7 +4,9 @@
 @author: cecile capponi, AMU
 L3 Informatique, 2023/24
 """
-
+from PIL import Image
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import MultinomialNB
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
 -> representation can be (to extend) 
@@ -17,8 +19,17 @@ input = an image (jpg, png, gif)
 output = a new representation of the image
 """    
 def raw_image_to_representation(image, representation):
-
-    return None
+    img = Image.open(image)
+    match representation:
+        case 'HC':
+            return img.histogram()
+        case 'PX':
+            return img.convert("RGB").getdata()
+        case 'GC':
+            return img.convert("L").getdata()
+        case _:
+            print("Representation not yet implmented")
+            exit -1
 
 """
 Returns a relevant structure embedding train images described according to the 
@@ -38,6 +49,8 @@ This structure will later be used to learn a model (function learn_model_from_da
 -- uses function raw_image_to_representation
 """
 def load_transform_label_train_dataset(directory, representation):
+    
+
     return None
     
     
@@ -69,7 +82,16 @@ input = transformed labelled dataset, the used learning algo and its hyper-param
 output =  a model fit with data
 """
 def learn_model_from_dataset(train_dataset, algo_dico):
-    model = None
+    X = train_dataset 
+    Y = [-1,1]
+    match algo_dico.algo:
+        case 'decision tree':
+            model = DecisionTreeClassifier(max_depth=algo_dico.max_depth,min_samples_split=algo_dico.min_samples_split)
+        case 'multinomial naive bayes':
+            model = 
+
+
+
     return model
 
 """
