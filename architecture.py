@@ -4,13 +4,14 @@
 @author: cecile capponi, AMU
 L3 Informatique, 2023/24
 """
-from Image import Image2
-from IPython.display import Image, display
-import os
-from os import listdir
 from PIL import Image
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import MultinomialNB
+import numpy as np
+from Image import Image2
+
+import os
+from os import listdir
 
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
@@ -29,9 +30,9 @@ def raw_image_to_representation(image, representation):
         case 'HC':
             return img.histogram()
         case 'PX':
-            return img.convert("RGB").getdata()
+            return list(img.convert("RGB").getdata())
         case 'GC':
-            return img.convert("L").getdata()
+            return list(img.convert("L").getdata())
         case _:
             print("Representation not yet implmented")
             exit -1
@@ -53,7 +54,7 @@ namely its name, its representation and its label)
 This structure will later be used to learn a model (function learn_model_from_dataset)
 -- uses function raw_image_to_representation
 """
-def load_transform_label_train_dataset(directory,representation):
+def load_transform_label_train_dataset(directory, representation):
 
     dataset = []
     
@@ -63,7 +64,7 @@ def load_transform_label_train_dataset(directory,representation):
         print(os.path.splitext(folder))
         print(os.listdir(directory))
         
-        folder_path = directory+"\\" + labelname
+        folder_path = directory+"" + labelname
 
         if labelname == 'Mer' :
             label = 1
@@ -73,16 +74,17 @@ def load_transform_label_train_dataset(directory,representation):
         print(label)
 
         for images in os.listdir(folder_path):
-            images_path = folder_path + "\\"+ images
+            images_path = folder_path + "/"+ images
             images_name = os.path.splitext(images)[0]
             images_representation = raw_image_to_representation(images_path,representation)
             image = Image2(images_name,images_representation,label)
             dataset.append(image)
+            print(image)
 
             
     return dataset
 
-print(load_transform_label_train_dataset(r"..\Machine_learning\data\Data", 'HC'))
+    
     
 """
 Returns a relevant structure embedding test images described according to the 
@@ -100,11 +102,12 @@ output = a relevant structure, preferably the same chosen for function load_tran
 -- while be used later in the project
 """
 def load_transform_test_dataset(directory, representation):
+
     testset = []
 
     for images in os.listdir(directory):
             
-            images_path = directory + "\\" + images
+            images_path = directory + "/" + images
             images_name = os.path.splitext(images)[0]
             images_representation = raw_image_to_representation(images_path,representation)
             images_label = None
@@ -123,8 +126,22 @@ input = transformed labelled dataset, the used learning algo and its hyper-param
 output =  a model fit with data
 """
 def learn_model_from_dataset(train_dataset, algo_dico):
-    model = None
-    return model
+    X = np.array([element.representation for element in train_dataset])
+    print("###########################################")
+    print(X)
+    Y = [element.label for element in train_dataset]
+    print(Y)
+    match algo_dico['algo']:
+        case 'decision tree':
+            model = DecisionTreeClassifier(max_depth=algo_dico.max_depth,min_samples_split=algo_dico.min_samples_split)
+        case 'multinomial naive bayes':
+            model = MultinomialNB(force_alpha=algo_dico["force_alpha"])
+        case _:
+            print("Algo not implemented")
+            exit -1
+    model.fit(X,Y)
+
+    return model,algo_dico
 
 """
 Given one example (previously loaded with its name and representation),
@@ -135,8 +152,7 @@ output = the label of that one data (+1 or -1)
 -- uses the model learned by function learn_model_from_dataset
 """
 def predict_example_label(example, model):
-    label = 1  # could be -1
-    return label
+    return model.predict(example)
 
 
 """
@@ -147,7 +163,9 @@ input = a structure embedding all transformed data to a representation, and a mo
 output =  a structure that associates a label to each identified data (image) of the input dataset
 """
 def predict_sample_label(dataset, model):
-    predictions = None
+    predictions = []
+    for image_to_predict in dataset : 
+        predictions.append((image_to_predict.name,model.predict(image_to_predict)))
     return predictions
 
 """
@@ -162,8 +180,16 @@ these details to be transmitted along the pipeline.
 input = where to save the predictions, structure embedding the dataset
 output =  OK if the file has been saved, not OK if not
 """
-def write_predictions(directory, filename, predictions):
-    return None
+def write_predictions(directory, filename, predictions,algo_dico):
+    try :
+        file = open(f"{directory}/{filename}")
+        file.write(str(algo_dico))
+        for prediction in predictions:
+            file.writelines(f"{prediction[0]} {prediction[1]}")
+        file.close()
+        print("OK")
+    except:
+        print("Not Ok")
 
 """
 Estimates the accuracy of a previously learned model using train data, 
@@ -175,6 +201,5 @@ output =  The score of success (betwwen 0 and 1, the higher the better, scores u
 are worst than random guess)
 """
 def estimate_model_score(train_dataset, algo_dico, k):
-    return None
-
     
+    return None
