@@ -7,9 +7,9 @@ L3 Informatique, 2023/24
 from PIL import Image
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score
+
 from Image import Image2
-from IPython.display import Image, display
+
 import os
 from os import listdir
 
@@ -64,7 +64,7 @@ def load_transform_label_train_dataset(directory, representation):
         print(os.path.splitext(folder))
         print(os.listdir(directory))
         
-        folder_path = directory+"\\" + labelname
+        folder_path = directory+"" + labelname
 
         if labelname == 'Mer' :
             label = 1
@@ -74,7 +74,7 @@ def load_transform_label_train_dataset(directory, representation):
         print(label)
 
         for images in os.listdir(folder_path):
-            images_path = folder_path + "\\"+ images
+            images_path = folder_path + "/"+ images
             images_name = os.path.splitext(images)[0]
             images_representation = raw_image_to_representation(images_path,representation)
             image = Image2(images_name,images_representation,label)
@@ -107,7 +107,7 @@ def load_transform_test_dataset(directory, representation):
 
     for images in os.listdir(directory):
             
-            images_path = directory + "\\" + images
+            images_path = directory + "/" + images
             images_name = os.path.splitext(images)[0]
             images_representation = raw_image_to_representation(images_path,representation)
             images_label = None
@@ -126,13 +126,16 @@ input = transformed labelled dataset, the used learning algo and its hyper-param
 output =  a model fit with data
 """
 def learn_model_from_dataset(train_dataset, algo_dico):
-    X = train_dataset 
-    Y = [-1,1]
-    match algo_dico.algo:
+    X = [element.representation for element in train_dataset]
+    print("###########################################")
+    print(X[0])
+    Y = [element.label for element in train_dataset]
+    print(Y)
+    match algo_dico['algo']:
         case 'decision tree':
             model = DecisionTreeClassifier(max_depth=algo_dico.max_depth,min_samples_split=algo_dico.min_samples_split)
         case 'multinomial naive bayes':
-            model = MultinomialNB(force_alpha=algo_dico.force_alpha)
+            model = MultinomialNB(force_alpha=algo_dico["force_alpha"])
         case _:
             print("Algo not implemented")
             exit -1
@@ -198,7 +201,7 @@ output =  The score of success (betwwen 0 and 1, the higher the better, scores u
 are worst than random guess)
 """
 def estimate_model_score(train_dataset, algo_dico, k):
-
+    
     return None
 
     
