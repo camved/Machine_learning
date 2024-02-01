@@ -203,5 +203,3 @@ are worst than random guess)
 def estimate_model_score(train_dataset, algo_dico, k):
     
     return None
-
-    
