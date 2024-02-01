@@ -20,7 +20,7 @@ def test_representation():
 
 
 #######TestGlobal#######
-train = architecture.load_transform_label_train_dataset("./data/Data/",'HC')    
+train = architecture.load_transform_label_train_dataset("./data/Data/",'PX')    
 test = architecture.load_transform_test_dataset("./testimage/",'HC')   
 algo_dico = { 'algo': 'multinomial naive bayes', 'force_alpha': True }
 model = architecture.learn_model_from_dataset(train,algo_dico)

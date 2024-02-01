@@ -7,7 +7,7 @@ L3 Informatique, 2023/24
 from PIL import Image
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import MultinomialNB
-
+import numpy as np
 from Image import Image2
 
 import os
@@ -30,9 +30,9 @@ def raw_image_to_representation(image, representation):
         case 'HC':
             return img.histogram()
         case 'PX':
-            return img.convert("RGB").getdata()
+            return list(img.convert("RGB").getdata())
         case 'GC':
-            return img.convert("L").getdata()
+            return list(img.convert("L").getdata())
         case _:
             print("Representation not yet implmented")
             exit -1
@@ -126,9 +126,9 @@ input = transformed labelled dataset, the used learning algo and its hyper-param
 output =  a model fit with data
 """
 def learn_model_from_dataset(train_dataset, algo_dico):
-    X = [element.representation for element in train_dataset]
+    X = np.array([element.representation for element in train_dataset])
     print("###########################################")
-    print(X[0])
+    print(X)
     Y = [element.label for element in train_dataset]
     print(Y)
     match algo_dico['algo']:
