@@ -9,7 +9,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import MultinomialNB
 import numpy as np
 from Image import Image2
-from sklearn.model_selection import StratifiedKFold, KFold
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split 
 import os
 from os import listdir
 
@@ -209,20 +210,22 @@ are worst than random guess)
 """
 def estimate_model_score(train_dataset, algo_dico, k):
 
-    match algo_dico['algo']:
-        case 'decision tree':
-            model = DecisionTreeClassifier(max_depth=algo_dico['max_depth'],min_samples_split=algo_dico['min_samples_split'])
-        case 'multinomial naive bayes':
-            model = MultinomialNB(force_alpha=algo_dico["force_alpha"])
-        case _:
-            print("Algo not implemented")
-            exit -1
+    X_testset =  []
+    Y_testset = []
+    nameset =[]
 
-    skf = StratifiedKFold(k)
+    for image in train_dataset:
+        
+        X_testset.append(image.representation)
+        Y_testset.append(image.label)
+        nameset.append(image.name)
 
+    X_train, X_test, y_train, y_test, name_train, name_test = train_test_split(X_testset, Y_testset,  nameset, test_size=1/k)
 
-    
-    
-    return None
+    train_data = [Image2(name_train[i],X_train[i],y_train[i]) for i in range (len(X_train))]
+    test_data = [Image2(name_test[i],X_test[i],y_test[i]) for i in range (len(X_test))]
+    Y_predictions =[y[1][0] for y in  predict_sample_label(test_data,learn_model_from_dataset(train_data, algo_dico)[0])]
+  
+    score = accuracy_score(y_test, Y_predictions)
 
-    
+    return score
