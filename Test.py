@@ -24,11 +24,7 @@ choice = int(input('Type de representation: \n 0 pour GC et 1 pour HC '))
 Representations =["GC","HC"]
 print("Loading Traning Data ...")
 
-train = architecture.load_transform_label_train_dataset("./data/Data/",Representations[choice]) 
-
-print("Loading Testing Data ...") 
-
-test = architecture.load_transform_test_dataset("./testimage/",Representations[choice]) 
+data = architecture.load_transform_label_train_dataset("./data/Data/",Representations[choice]) 
 
 algo_bayes = { 'algo': 'multinomial naive bayes', 'force_alpha': True }
 algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 } 
