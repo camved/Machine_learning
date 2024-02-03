@@ -9,9 +9,11 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import MultinomialNB
 import numpy as np
 from Image import Image2
-
+from sklearn.model_selection import StratifiedKFold, KFold
 import os
 from os import listdir
+
+global TRESHOLD 
 
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
@@ -25,13 +27,19 @@ input = an image (jpg, png, gif)
 output = a new representation of the image
 """    
 def raw_image_to_representation(image, representation):
+    global TRESHOLD
     img = Image.open(image)
+
+    #img = im.resize((300, 128))
     match representation:
         case 'HC':
+            TRESHOLD = 256
             return img.histogram()
         case 'PX':
+            TRESHOLD = 12060
             return list(img.convert("RGB").getdata())
         case 'GC':
+            TRESHOLD = 12060
             return list(img.convert("L").getdata())
         case _:
             print("Representation not yet implmented")
@@ -60,9 +68,7 @@ def load_transform_label_train_dataset(directory, representation):
     
     for folder in os.listdir(directory) : 
         labelname = os.path.splitext(folder)[0]
-        print(labelname)
-        print(os.path.splitext(folder))
-        print(os.listdir(directory))
+
         
         folder_path = directory+"" + labelname
 
@@ -71,7 +77,6 @@ def load_transform_label_train_dataset(directory, representation):
         else :
             label = -1
 
-        print(label)
 
         for images in os.listdir(folder_path):
             images_path = folder_path + "/"+ images
@@ -79,7 +84,6 @@ def load_transform_label_train_dataset(directory, representation):
             images_representation = raw_image_to_representation(images_path,representation)
             image = Image2(images_name,images_representation,label)
             dataset.append(image)
-            print(image)
 
             
     return dataset
@@ -126,19 +130,22 @@ input = transformed labelled dataset, the used learning algo and its hyper-param
 output =  a model fit with data
 """
 def learn_model_from_dataset(train_dataset, algo_dico):
-    X = np.array([element.representation for element in train_dataset])
-    print("###########################################")
-    print(X)
+    X = []
+    
+    for element in train_dataset:
+        X.append(element.representation[:TRESHOLD])
+
     Y = [element.label for element in train_dataset]
-    print(Y)
+
     match algo_dico['algo']:
         case 'decision tree':
-            model = DecisionTreeClassifier(max_depth=algo_dico.max_depth,min_samples_split=algo_dico.min_samples_split)
+            model = DecisionTreeClassifier(max_depth=algo_dico['max_depth'],min_samples_split=algo_dico['min_samples_split'])
         case 'multinomial naive bayes':
             model = MultinomialNB(force_alpha=algo_dico["force_alpha"])
         case _:
             print("Algo not implemented")
             exit -1
+    X = np.array(X)
     model.fit(X,Y)
 
     return model,algo_dico
@@ -165,7 +172,7 @@ output =  a structure that associates a label to each identified data (image) of
 def predict_sample_label(dataset, model):
     predictions = []
     for image_to_predict in dataset : 
-        predictions.append((image_to_predict.name,model.predict(image_to_predict)))
+        predictions.append((image_to_predict.name,model.predict(np.array([image_to_predict.representation[:TRESHOLD]]))))
     return predictions
 
 """
@@ -181,15 +188,13 @@ input = where to save the predictions, structure embedding the dataset
 output =  OK if the file has been saved, not OK if not
 """
 def write_predictions(directory, filename, predictions,algo_dico):
-    try :
-        file = open(f"{directory}/{filename}")
-        file.write(str(algo_dico))
-        for prediction in predictions:
-            file.writelines(f"{prediction[0]} {prediction[1]}")
-        file.close()
-        print("OK")
-    except:
-        print("Not Ok")
+    file = open(f"{directory}/{filename}",'w')
+    file.write(str(algo_dico)+'\n')
+    for prediction in predictions:
+        file.writelines(f"{prediction[0]} {prediction[1]}\n")
+    file.close()
+    print("OK")
+
 
 """
 Estimates the accuracy of a previously learned model using train data, 
@@ -201,6 +206,20 @@ output =  The score of success (betwwen 0 and 1, the higher the better, scores u
 are worst than random guess)
 """
 def estimate_model_score(train_dataset, algo_dico, k):
+
+    match algo_dico['algo']:
+        case 'decision tree':
+            model = DecisionTreeClassifier(max_depth=algo_dico['max_depth'],min_samples_split=algo_dico['min_samples_split'])
+        case 'multinomial naive bayes':
+            model = MultinomialNB(force_alpha=algo_dico["force_alpha"])
+        case _:
+            print("Algo not implemented")
+            exit -1
+
+    skf = StratifiedKFold(k)
+
+
+    
     
     return None
 
