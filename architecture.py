@@ -9,9 +9,10 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import MultinomialNB
 import numpy as np
 from Image import Image2
-
 import os
 from os import listdir
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 """
 Computes a representation of an image from the (gif, png, jpg...) file 
@@ -200,6 +201,34 @@ in a hold-out or by cross-validation
 output =  The score of success (betwwen 0 and 1, the higher the better, scores under 0.5
 are worst than random guess)
 """
+
+# We choose a hold-out validation
+
 def estimate_model_score(train_dataset, algo_dico, k):
-    
-    return None
+        
+
+        #ensemble de test
+        testset = load_transform_test_dataset(train_dataset)
+        X_testset =  []
+        Y_testset = []
+
+        for image in testset:
+            
+            X_testset.append(image.representation)
+            Y_testset.append(image.label)
+
+        X_train, X_test, y_train, y_test = train_test_split(X_testset, Y_testset, test_size=1/k)
+
+        match algo_dico['algo']:
+            case 'decision tree':
+                model = DecisionTreeClassifier(max_depth=algo_dico['max_depth'],min_samples_split=algo_dico['min_samples_split'])
+            case 'multinomial naive bayes':
+                model = MultinomialNB(force_alpha=algo_dico["force_alpha"])
+            case _:
+                print("Algo not implemented")
+                exit -1 
+
+        Y_predictions = predict_sample_label(train_dataset,model)
+        score = accuracy_score(Y_testset, Y_predictions)
+
+        return score
