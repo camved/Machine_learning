@@ -10,8 +10,7 @@ from sklearn.naive_bayes import MultinomialNB
 import numpy as np
 from Image import Image2
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import StratifiedKFold, KFold
+from sklearn.model_selection import train_test_split 
 import os
 from os import listdir
 
