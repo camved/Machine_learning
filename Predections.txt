@@ -1,0 +1,3 @@
+{'algo': 'multinomial naive bayes', 'force_alpha': True}
+Mer [1]
+Mountain [1]
