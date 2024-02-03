@@ -139,6 +139,7 @@ def learn_model_from_dataset(train_dataset, algo_dico):
 
     match algo_dico['algo']:
         case 'decision tree':
+        
             model = DecisionTreeClassifier(max_depth=algo_dico['max_depth'],min_samples_split=algo_dico['min_samples_split'])
         case 'multinomial naive bayes':
             model = MultinomialNB(force_alpha=algo_dico["force_alpha"])
@@ -146,6 +147,7 @@ def learn_model_from_dataset(train_dataset, algo_dico):
             print("Algo not implemented")
             exit -1
     X = np.array(X)
+
     model.fit(X,Y)
 
     return model,algo_dico
