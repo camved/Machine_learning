@@ -2,8 +2,6 @@
 
 ## Rendu du 29/01/2024
 
-## Rendu du 29/01/2024
-
 Aujourd'hui, le 29/01/2024, nous avons réaliser les fonctions demandées lors du TP. 
 Nous avons pour les fonctions load_transform_label_train_dataset et load_transform_label_test_dataset, qui renvoie une liste d'image de type Image2, une nouvelle classe que nous avons implémenté.
 Elle contient une méthode str et représente les images avec leur "name", "label" et "representation".
