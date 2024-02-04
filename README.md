@@ -19,6 +19,22 @@ Ce qu'il reste à faire avant le second rendu :
 
 ## Rendu du 04/02/24
 
+Le problème lié au merge a été corrigé. Nous avons aussi implémenté la dernière fonction, dans la quelle nous avons choisi la validation de type hold-out.
+
+Pour ce qui est des tests, nous avons pu les implémenter dans le fichier test.
+
+### Comment tester ? 
+
+Avant de tester la fonction en elle-même, il faut renseigner la représentation souhaitée (entre "GC" et "HC") et le chemin absolu du fichier contenant les images que nous allons tester dans train.  
+
+### Résultats des tests : 
+
+Les méthodes n'ont pas eu de bugs majeurs sauf une : learn_model_from_dataset avec le mode "PX", le tenseur de pixels. En effet, le tenseur retourne une liste de tuples de trois éléments, incompatibles avec la fonction fit qui ne prend que des éléments de taille maximale 2. 
+
+Nous avons donc essayé de chercher, sans succès, une fonction bijective de R^3 dans R pour modéliser nos pixels. 
+
+## Rendu du 04/02/24
+
 Le problème lié au merge a été corrigé. Nous avons aussi implémenté la dernière fonction, dans laquelle nous avons choisi la validation de type hold-out.
 
 Pour ce qui est des tests, nous avons pu les implémenter dans le fichier test.
