@@ -152,6 +152,7 @@ def learn_model_from_dataset(train_dataset, algo_dico):
 
     return model,algo_dico
 
+
 """
 Given one example (previously loaded with its name and representation),
 computes its class according to a previously learned model.
@@ -176,6 +177,7 @@ def predict_sample_label(dataset, model):
     for image_to_predict in dataset : 
         predictions.append((image_to_predict.name,model.predict(np.array([image_to_predict.representation[:TRESHOLD]]))))
     return predictions
+
 
 """
 Save the predictions on dataset to a text file with syntax:
@@ -210,30 +212,23 @@ are worst than random guess)
 # We choose a hold-out validation
 
 def estimate_model_score(train_dataset, algo_dico, k):
+
+    X_testset =  []
+    Y_testset = []
+    nameset =[]
+
+    for image in train_dataset:
         
+        X_testset.append(image.representation)
+        Y_testset.append(image.label)
+        nameset.append(image.name)
 
-        #ensemble de test
-        testset = load_transform_test_dataset(train_dataset)
-        X_testset =  []
-        Y_testset = []
+    X_train, X_test, y_train, y_test, name_train, name_test = train_test_split(X_testset, Y_testset,  nameset, test_size=1/k)
 
-        for image in testset:
-            
-            X_testset.append(image.representation)
-            Y_testset.append(image.label)
+    train_data = [Image2(name_train[i],X_train[i],y_train[i]) for i in range (len(X_train))]
+    test_data = [Image2(name_test[i],X_test[i],y_test[i]) for i in range (len(X_test))]
+    Y_predictions =[y[1][0] for y in  predict_sample_label(test_data,learn_model_from_dataset(train_data, algo_dico)[0])]
+  
+    score = accuracy_score(y_test, Y_predictions)
 
-        X_train, X_test, y_train, y_test = train_test_split(X_testset, Y_testset, test_size=1/k)
-
-        match algo_dico['algo']:
-            case 'decision tree':
-                model = DecisionTreeClassifier(max_depth=algo_dico['max_depth'],min_samples_split=algo_dico['min_samples_split'])
-            case 'multinomial naive bayes':
-                model = MultinomialNB(force_alpha=algo_dico["force_alpha"])
-            case _:
-                print("Algo not implemented")
-                exit -1 
-
-        Y_predictions = predict_sample_label(train_dataset,model)
-        score = accuracy_score(Y_testset, Y_predictions)
-
-        return score
+    return score

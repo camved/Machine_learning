@@ -14,3 +14,4 @@ class Image2 :
         res += "label " + str(self.label) + "\n"
         
         return res
+ 

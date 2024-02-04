@@ -11,3 +11,6 @@ Ce qu'il reste à faire avant le second rendu :
 - les tests (pour l'instant réalisés avec des "print", mais on souhaiterait le faire avec le module test.unit )
 - Corriger le problème lié au Merge. 
 
+Rendu du 04/02/24
+
+Le problème lié au merge a été corrigé. Nous avons aussi implémenté la dernière fonction, 

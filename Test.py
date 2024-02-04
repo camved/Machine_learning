@@ -22,14 +22,15 @@ def test_representation():
 #######TestGlobal#######
 Representations =["GC","HC"]
 print("Loading Traning Data ...")
-train = architecture.load_transform_label_train_dataset("./data/Data/",'PX') 
+train = architecture.load_transform_label_train_dataset("./data/Data/",'HC') 
 print("Loading Testing Data ...")   
-test = architecture.load_transform_test_dataset("./testimage/",'PX')   
+test = architecture.load_transform_test_dataset("./testimage/",'HC')   
 algo_bayes = { 'algo': 'multinomial naive bayes', 'force_alpha': True }
 algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 } 
 print('Training model ...')
-model = architecture.learn_model_from_dataset(train,algo_tree)
-print('Getting Predictions ...')
-predections = architecture.predict_sample_label(test,model[0])
-architecture.write_predictions(".","Predections.txt",predections,algo_bayes)
+print(architecture.estimate_model_score(train,algo_tree,2))
+# model = architecture.learn_model_from_dataset(train,algo_tree)
+# print('Getting Predictions ...')
+# predections = architecture.predict_sample_label(test,model[0])
+# architecture.write_predictions(".","Predections.txt",predections,algo_bayes)
 
