@@ -21,20 +21,13 @@ def test_representation():
 
 #######TestGlobal#######
 choice = int(input('Type de representation: \n 0 pour GC et 1 pour HC '))
-choice = int(input('Type de representation: \n 0 pour GC et 1 pour HC '))
 Representations =["GC","HC"]
 print("Loading Traning Data ...")
 
 data = architecture.load_transform_label_train_dataset("./data/Data/",Representations[choice]) 
 
-
-data = architecture.load_transform_label_train_dataset("./data/Data/",Representations[choice]) 
-
 algo_bayes = { 'algo': 'multinomial naive bayes', 'force_alpha': True }
 algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 } 
-choice_algo = int(input("Type d'algo : \n 0 pour multinomial naive bayes et 1 pour decision tree "))
-algo_list = [algo_bayes,algo_tree]
-k = int(input('Number of splits : \n '))
 choice_algo = int(input("Type d'algo : \n 0 pour multinomial naive bayes et 1 pour decision tree "))
 algo_list = [algo_bayes,algo_tree]
 k = int(input('Number of splits : \n '))
