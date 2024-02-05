@@ -1,3 +1,0 @@
-{'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3}
-Mer [1]
-Mountain [1]

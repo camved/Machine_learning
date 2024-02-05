@@ -31,12 +31,7 @@ algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 }
 choice_algo = int(input("Type d'algo : \n 0 pour multinomial naive bayes et 1 pour decision tree "))
 algo_list = [algo_bayes,algo_tree]
 k = int(input('Number of splits : \n '))
-choice_algo = int(input("Type d'algo : \n 0 pour multinomial naive bayes et 1 pour decision tree"))
-algo_list = [algo_bayes,algo_tree]
-k = int(input('Number of splits : \n '))
 print('Training model ...')
-model = architecture.learn_model_from_dataset(train,algo_tree)
 print('Getting Predictions ...')
 print('Score :')
 print(architecture.estimate_model_score(data,algo_list[choice_algo],k))
-
