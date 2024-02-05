@@ -54,7 +54,6 @@ Les méthodes n'ont pas eu de bugs majeurs sauf une : learn_model_from_dataset a
 
 Nous avons donc essayé de chercher, sans succès, une fonction bijective de R^3 dans R pour modéliser nos pixels dans l'objectif d'avoir des éléments de taille adéquate, utilisable avec la fonction `fit`.  
 
-Nous avons donc essayé de chercher, sans succès, une fonction bijective de R^3 dans R pour modéliser nos pixels. 
 
 ## Rendu du 04/02/24
 
