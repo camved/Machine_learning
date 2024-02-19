@@ -17,7 +17,10 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split 
 import os
 from os import listdir
-
+from PIL.ImageFilter import (
+   BLUR, CONTOUR, DETAIL, EDGE_ENHANCE, EDGE_ENHANCE_MORE,
+   EMBOSS, FIND_EDGES, SMOOTH, SMOOTH_MORE, SHARPEN
+)
 global TRESHOLD 
 
 """
@@ -33,9 +36,18 @@ output = a new representation of the image
 """    
 def raw_image_to_representation(image, representation):
     global TRESHOLD
-    img = Image.open(image)
+    img_changed = Image.open(image)
 
-    img = img.resize((256, 256))
+    img_cut = couper_image(img_changed)
+
+    img_cut =img_cut.convert('RGB')
+
+    img_cut_edges = img_cut.filter(FIND_EDGES)
+
+    img = img_cut_edges.resize((256, 256))
+
+    
+    
     match representation:
         case 'HC':
             TRESHOLD = 256
@@ -141,23 +153,43 @@ Function to transform the picture
 
 """
 
-def transform_horizontally(chemin_image, facteur_largeur, facteur_hauteur):
-    # Ouvrir l'image
-    image = Image.open(chemin_image)
-
-    # Obtenir les dimensions originales de l'image
+def transform_horizontally(image, facteur_largeur, facteur_hauteur):
+    
+    
     largeur_originale, hauteur_originale = image.size
 
-    # Calculer les nouvelles dimensions en fonction des facteurs d'étirement
     nouvelle_largeur = int(largeur_originale * facteur_largeur)
     nouvelle_hauteur = int(hauteur_originale * facteur_hauteur)
 
-    # Appliquer la transformation d'étirement
     image_etiree = image.resize((nouvelle_largeur, nouvelle_hauteur))
+    return image_etiree
 
     # Sauvegarder l'image étirée
-    image_etiree.save("image_etiree.jpg")
+    #image_etiree.save("image_etiree.jpg")
+
+def couper_image(image):
+
     
+
+    # Obtenir les dimensions de l'image
+    largeur, hauteur = image.size
+
+    # Calculer la position de coupe (au milieu dans cet exemple)
+    première_moitie_hauteur = hauteur//3
+    deuxième_moitie_hauteur = hauteur - première_moitie_hauteur
+
+    # Couper l'image en deux parties horizontales
+    partie_superieure = image.crop((0, 0, largeur, première_moitie_hauteur))
+    partie_inferieure = image.crop((0, deuxième_moitie_hauteur, largeur, hauteur))
+
+    return partie_inferieure
+
+    # Sauvegarder les deux parties
+    # partie_superieure.save("partie_superieure.jpg")
+    # partie_inferieure.save("partie_inferieure.jpg")
+
+
+
 """
 Learn a model (function) from a pre-computed representation of the dataset, using the algorithm 
 and its hyper-parameters described in algo_dico

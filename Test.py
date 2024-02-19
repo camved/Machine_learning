@@ -1,6 +1,9 @@
 import architecture
 from PIL import Image
 import matplotlib.pyplot as plt
+from alive_progress import alive_bar
+from datetime import datetime
+
 image_path_mer = "./testimage/Mer.jpeg" 
 image_path_mountain = "./testimage/Mountain.jpeg"
 image_path_list = [image_path_mer,image_path_mountain]
@@ -42,7 +45,7 @@ def test_model() :
 # algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 } 
 # algo_SVM ={'algo':'SVM', 'dual':'auto','random_state':0}
 # algo_neighbors = {'algo':'k nearest neighbors', 'n_neighbors': 5 }
-# choice_algo = int(input("Type d'algo : \n 0 pour multinomial naive0 bayes et 1 pour decision tree et 2 pour SVM  et 3 pour K plus proches voisins "))
+# choice_algo = int(input("Type d'algo : \n 0 pour multinomial naive bayes,  1 pour decision tree,  2 pour SVM  ou 3 pour K plus proches voisins \n "))
 # algo_list = [algo_bayes,algo_tree,algo_SVM,algo_neighbors]
 # k = int(input('Number of splits : \n '))
 # print('Training model ...')
@@ -51,5 +54,36 @@ def test_model() :
 # print(architecture.estimate_model_score(data,algo_list[choice_algo],k))
 
 
+def automated_tester():
+    algo_bayes = { 'algo': 'multinomial naive bayes', 'force_alpha': True }
+    algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 } 
+    algo_SVM ={'algo':'SVM', 'dual':'auto','random_state':0}
+    algo_neighbors = {'algo':'k nearest neighbors', 'n_neighbors': 5 }
+    algo_list = [algo_bayes,algo_tree,algo_SVM,algo_neighbors]
+    Representations =["GC","HC","PX"]
+    list_of_splits = [4,3,7,9,10]
+    output =""
+    for rep in Representations:
+        
+        data = architecture.load_transform_label_train_dataset("./data/Data/",rep) 
+        output += f"##Representation {rep} :\n"
+    
+        for algo in algo_list:
+            output+= "#"+str(algo)+"  \n"
+            with alive_bar() as bar:
+                for k in list_of_splits:
+                    output += f"Number of splits {k} :\n"+ str(architecture.estimate_model_score(data,algo,k))+"\n"
+                    bar()
+    return output
+
+def wrtite_log_file(log):
+    file = open(r"./Test/"+str(datetime.now().strftime("%H_%M_%S"))+".md",'w') 
+    file.write(log)  
+    file.close()
+wrtite_log_file(automated_tester())
+
+
 ############Test#############
-print(architecture.transform_horizontally(r"./testimage/PlageAgadirmaroc.jpg",2,1))
+#print(architecture.transform_horizontally(r"./testimage/PlageAgadirmaroc.jpg",2,1))
+#print(architecture.couper_image(r'./Test/image_etiree.jpg'))
+
