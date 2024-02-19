@@ -25,7 +25,7 @@ def test_model() :
     data = architecture.load_transform_label_train_dataset(r"./data/Data/",'GC')
     model = architecture.learn_model_from_dataset(data,algo_tree)[0]
     predictions = architecture.predict_sample_label(datatest, model)
-    architecture.write_predictions(r"./data/Data", "Prediction_des_tests2.txt",predictions, algo_tree )
+    architecture.write_predictions(r"./Test", "Prediction_des_tests2.txt",predictions, algo_tree )
     print("End Test")
 
 # print(test_model())
