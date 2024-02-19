@@ -16,7 +16,19 @@ def test_representation():
         print("End Test")
 
 # test_representation()
-        
+def test_model() : 
+
+    algo_bayes = { 'algo': 'multinomial naive bayes', 'force_alpha': True }
+    algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 } 
+    algo_list = [algo_bayes,algo_tree]
+    datatest =  architecture.load_transform_test_dataset(r"./testimage/", 'GC') 
+    data = architecture.load_transform_label_train_dataset(r"./data/Data/",'GC')
+    model = architecture.learn_model_from_dataset(data,algo_tree)[0]
+    predictions = architecture.predict_sample_label(datatest, model)
+    architecture.write_predictions(r".\data\Data", "PrÃ©diction_des_tests2.txt",predictions, algo_tree )
+    print("End Test")
+
+print(test_model())
 
 
 #######TestGlobal#######
