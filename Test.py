@@ -32,24 +32,24 @@ def test_model() :
 
 
 #######TestGlobal#######
-choice = int(input('Type de representation: \n saisissez 0 pour GC, 1 pour HC ou 2 pour PX \n '))
-Representations =["GC","HC","PX"]
-print("Loading Traning Data ...")
+# choice = int(input('Type de representation: \n saisissez 0 pour GC, 1 pour HC ou 2 pour PX \n '))
+# Representations =["GC","HC","PX"]
+# print("Loading Traning Data ...")
 
-data = architecture.load_transform_label_train_dataset("./data/Data/",Representations[choice]) 
+# data = architecture.load_transform_label_train_dataset("./data/Data/",Representations[choice]) 
 
-algo_bayes = { 'algo': 'multinomial naive bayes', 'force_alpha': True }
-algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 } 
-algo_SVM ={'algo':'SVM', 'dual':'auto','random_state':0}
-algo_neighbors = {'algo':'k nearest neighbors', 'n_neighbors': 5 }
-choice_algo = int(input("Type d'algo : \n 0 pour multinomial naive0 bayes et 1 pour decision tree et 2 pour SVM  et 3 pour K plus proches voisins "))
-algo_list = [algo_bayes,algo_tree,algo_SVM,algo_neighbors]
-k = int(input('Number of splits : \n '))
-print('Training model ...')
-print('Getting Predictions ...')
-print('Score :')
-print(architecture.estimate_model_score(data,algo_list[choice_algo],k))
+# algo_bayes = { 'algo': 'multinomial naive bayes', 'force_alpha': True }
+# algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 } 
+# algo_SVM ={'algo':'SVM', 'dual':'auto','random_state':0}
+# algo_neighbors = {'algo':'k nearest neighbors', 'n_neighbors': 5 }
+# choice_algo = int(input("Type d'algo : \n 0 pour multinomial naive0 bayes et 1 pour decision tree et 2 pour SVM  et 3 pour K plus proches voisins "))
+# algo_list = [algo_bayes,algo_tree,algo_SVM,algo_neighbors]
+# k = int(input('Number of splits : \n '))
+# print('Training model ...')
+# print('Getting Predictions ...')
+# print('Score :')
+# print(architecture.estimate_model_score(data,algo_list[choice_algo],k))
 
 
 ############Test#############
-
+print(architecture.transform_horizontally(r"./testimage/PlageAgadirmaroc.jpg",2,1))
