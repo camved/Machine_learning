@@ -42,13 +42,23 @@ def raw_image_to_representation(image, representation):
             return img.histogram()
         case 'PX':
             TRESHOLD = 12060
-            return list(img.convert("RGB").getdata())
+            return  np.array(img.convert("RGB").getdata()).flatten()
         case 'GC':
             TRESHOLD = 12060
             return list(img.convert("L").getdata())
         case _:
             print("Representation not yet implmented")
             exit -1
+        
+# Nos pixels sont des entiers compris entre 0 et 256. En prenant des nombres entiers premiers supérieurs à 256, on assure une bijection de R^3 dans R pour nos pixels,
+# évitant ainsi les nuances de gris. 
+def get_mean(arr):
+    l = len(arr)
+    base = [257,263,269]
+    s = 0
+    for i in range(0,len(arr)-1):
+        s += arr[i]*base[i]
+    return s
 
 """
 Returns a relevant structure embedding train images described according to the 
