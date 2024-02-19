@@ -49,3 +49,7 @@ print('Training model ...')
 print('Getting Predictions ...')
 print('Score :')
 print(architecture.estimate_model_score(data,algo_list[choice_algo],k))
+
+
+############Test#############
+

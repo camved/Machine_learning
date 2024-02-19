@@ -135,6 +135,29 @@ def load_transform_test_dataset(directory, representation):
 
     return testset
 
+
+"""
+Function to transform the picture 
+
+"""
+
+def transform_horizontally(chemin_image, facteur_largeur, facteur_hauteur):
+    # Ouvrir l'image
+    image = Image.open(chemin_image)
+
+    # Obtenir les dimensions originales de l'image
+    largeur_originale, hauteur_originale = image.size
+
+    # Calculer les nouvelles dimensions en fonction des facteurs d'étirement
+    nouvelle_largeur = int(largeur_originale * facteur_largeur)
+    nouvelle_hauteur = int(hauteur_originale * facteur_hauteur)
+
+    # Appliquer la transformation d'étirement
+    image_etiree = image.resize((nouvelle_largeur, nouvelle_hauteur))
+
+    # Sauvegarder l'image étirée
+    image_etiree.save("image_etiree.jpg")
+    
 """
 Learn a model (function) from a pre-computed representation of the dataset, using the algorithm 
 and its hyper-parameters described in algo_dico
