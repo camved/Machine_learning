@@ -35,7 +35,7 @@ def raw_image_to_representation(image, representation):
     global TRESHOLD
     img = Image.open(image)
 
-    #img = im.resize((300, 128))
+    # img = img.resize((128, 128))
     match representation:
         case 'HC':
             TRESHOLD = 256
