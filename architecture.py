@@ -4,6 +4,10 @@
 @author: cecile capponi, AMU
 L3 Informatique, 2023/24
 """
+from sklearn.svm import LinearSVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from PIL import Image
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import MultinomialNB
@@ -31,20 +35,30 @@ def raw_image_to_representation(image, representation):
     global TRESHOLD
     img = Image.open(image)
 
-    #img = im.resize((300, 128))
+    img = img.resize((256, 256))
     match representation:
         case 'HC':
             TRESHOLD = 256
             return img.histogram()
         case 'PX':
             TRESHOLD = 12060
-            return list(img.convert("RGB").getdata())
+            return  np.array(img.convert("RGB").getdata()).flatten()
         case 'GC':
             TRESHOLD = 12060
             return list(img.convert("L").getdata())
         case _:
             print("Representation not yet implmented")
             exit -1
+        
+# Nos pixels sont des entiers compris entre 0 et 256. En prenant des nombres entiers premiers supérieurs à 256, on assure une bijection de R^3 dans R pour nos pixels,
+# évitant ainsi les nuances de gris. 
+def get_mean(arr):
+    l = len(arr)
+    base = [257,263,269]
+    s = 0
+    for i in range(0,len(arr)-1):
+        s += arr[i]*base[i]
+    return s
 
 """
 Returns a relevant structure embedding train images described according to the 
@@ -139,6 +153,10 @@ def learn_model_from_dataset(train_dataset, algo_dico):
     Y = [element.label for element in train_dataset]
 
     match algo_dico['algo']:
+        case 'k nearest neighbors':
+            model = KNeighborsClassifier(n_neighbors=algo_dico['n_neighbors'])
+        case 'SVM':
+            model = make_pipeline(StandardScaler(),LinearSVC(dual=algo_dico['dual'],random_state=algo_dico['random_state']))
         case 'decision tree':
         
             model = DecisionTreeClassifier(max_depth=algo_dico['max_depth'],min_samples_split=algo_dico['min_samples_split'])

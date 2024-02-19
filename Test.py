@@ -1,6 +1,6 @@
 import architecture
 from PIL import Image
-
+import matplotlib.pyplot as plt
 image_path_mer = "./testimage/Mer.jpeg" 
 image_path_mountain = "./testimage/Mountain.jpeg"
 image_path_list = [image_path_mer,image_path_mountain]
@@ -25,24 +25,27 @@ def test_model() :
     data = architecture.load_transform_label_train_dataset(r"./data/Data/",'GC')
     model = architecture.learn_model_from_dataset(data,algo_tree)[0]
     predictions = architecture.predict_sample_label(datatest, model)
-    architecture.write_predictions(r".\data\Data", "Prédiction_des_tests2.txt",predictions, algo_tree )
+    architecture.write_predictions(r"./Test", "Prediction_des_tests2.txt",predictions, algo_tree )
     print("End Test")
 
-print(test_model())
+# print(test_model())
 
-# #######TestGlobal#######
-# choice = int(input('Type de representation: \n 0 pour GC et 1 pour HC '))
-# Representations =["GC","HC"]
-# print("Loading Traning Data ...")
 
-# data = architecture.load_transform_label_train_dataset("./data/Data/",Representations[choice]) 
+#######TestGlobal#######
+choice = int(input('Type de representation: \n saisissez 0 pour GC, 1 pour HC ou 2 pour PX \n '))
+Representations =["GC","HC","PX"]
+print("Loading Traning Data ...")
 
-# algo_bayes = { 'algo': 'multinomial naive bayes', 'force_alpha': True }
-# algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 } 
-# choice_algo = int(input("Type d'algo : \n 0 pour multinomial naive bayes et 1 pour decision tree "))
-# algo_list = [algo_bayes,algo_tree]
-# k = int(input('Number of splits : \n '))
-# print('Training model ...')
-# print('Getting Predictions ...')
-# print('Score :')
-# print(architecture.estimate_model_score(data,algo_list[choice_algo],k))
+data = architecture.load_transform_label_train_dataset("./data/Data/",Representations[choice]) 
+
+algo_bayes = { 'algo': 'multinomial naive bayes', 'force_alpha': True }
+algo_tree = { 'algo': 'decision tree', 'max_depth': 5, 'min_samples_split': 3 } 
+algo_SVM ={'algo':'SVM', 'dual':'auto','random_state':0}
+algo_neighbors = {'algo':'k nearest neighbors', 'n_neighbors': 5 }
+choice_algo = int(input("Type d'algo : \n 0 pour multinomial naive0 bayes et 1 pour decision tree et 2 pour SVM  et 3 pour K plus proches voisins "))
+algo_list = [algo_bayes,algo_tree,algo_SVM,algo_neighbors]
+k = int(input('Number of splits : \n '))
+print('Training model ...')
+print('Getting Predictions ...')
+print('Score :')
+print(architecture.estimate_model_score(data,algo_list[choice_algo],k))
