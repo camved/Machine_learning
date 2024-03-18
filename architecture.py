@@ -320,8 +320,10 @@ def get_predictions_from_vote(test_data,algo_dicos,train_data):
         model_predections=[]
         for model in models:
             model_predections.append(predict_example_label(example,model))
+            
 
-        predictions.append((example,most_frequent(model_predections)))
+        predictions.append((example.name,most_frequent(model_predections)))
+
         
     return predictions
         
@@ -347,8 +349,8 @@ def estimate_model_score_voting(train_dataset, algo_dicos, k):
 
     train_data = [Image2(name_train[i],X_train[i],y_train[i]) for i in range (len(X_train))]
     test_data = [Image2(name_test[i],X_test[i],y_test[i]) for i in range (len(X_test))]
-    Y_predictions =[y[1][0] for y in  get_predictions_from_vote(test_data,algo_dicos,train_dataset)]
-  
+    Y_predictions =[y[1] for y in  get_predictions_from_vote(test_data,algo_dicos,train_data)]
+
     score = accuracy_score(y_test, Y_predictions)
 
     return score
