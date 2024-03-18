@@ -17,6 +17,11 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split 
 import os
 from os import listdir
+from extracter import extract_for_ground
+from PIL.ImageFilter import (
+   BLUR, CONTOUR, DETAIL, EDGE_ENHANCE, EDGE_ENHANCE_MORE,
+   EMBOSS, FIND_EDGES, SMOOTH, SMOOTH_MORE, SHARPEN
+)
 
 global TRESHOLD 
 
@@ -33,9 +38,20 @@ output = a new representation of the image
 """    
 def raw_image_to_representation(image, representation):
     global TRESHOLD
-    img = Image.open(image)
+    
+    img_changed = Image.open(image)
 
-    img = img.resize((256, 256))
+    img_cut = couper_image(img_changed)
+
+    img_cut =img_cut.convert('RGB')
+
+    img_resize = transform_horizontally(img_cut,3,1 )
+
+    #img_cut_edges = img_cut.filter(FIND_EDGES)
+
+    img = img_resize.resize((256, 256))
+
+    img.resize((256,256))
     match representation:
         case 'HC':
             TRESHOLD = 256
@@ -50,6 +66,38 @@ def raw_image_to_representation(image, representation):
             print("Representation not yet implmented")
             exit -1
         
+
+def transform_horizontally(image, facteur_largeur, facteur_hauteur):
+    
+    
+    largeur_originale, hauteur_originale = image.size
+
+    nouvelle_largeur = int(largeur_originale * facteur_largeur)
+    nouvelle_hauteur = int(hauteur_originale * facteur_hauteur)
+
+    image_etiree = image.resize((nouvelle_largeur, nouvelle_hauteur))
+    return image_etiree
+
+def couper_image(image):
+
+
+
+    # Obtenir les dimensions de l'image
+    largeur, hauteur = image.size
+
+    # Calculer la position de coupe (au milieu dans cet exemple)
+    première_moitie_hauteur = hauteur//2.5
+    deuxième_moitie_hauteur = hauteur - première_moitie_hauteur
+
+    # Couper l'image en deux parties horizontales
+    partie_superieure = image.crop((0, 0, largeur, première_moitie_hauteur))
+    partie_inferieure = image.crop((0, deuxième_moitie_hauteur, largeur, hauteur))
+
+    return partie_inferieure
+
+
+    # Sauvegarder l'image étirée
+    #image_etiree.save("image_etiree.jpg")
 # Nos pixels sont des entiers compris entre 0 et 256. En prenant des nombres entiers premiers supérieurs à 256, on assure une bijection de R^3 dans R pour nos pixels,
 # évitant ainsi les nuances de gris. 
 def get_mean(arr):
@@ -59,6 +107,15 @@ def get_mean(arr):
     for i in range(0,len(arr)-1):
         s += arr[i]*base[i]
     return s
+
+
+# def feltering_test(image_path):
+#     img = Image.open(image_path)
+#     img = img.convert("RGB")
+#     img = img.filter(FIND_EDGES)
+#     img.save("filtered.jpg")
+    
+# feltering_test("./testimage/PLAGEAGADIR2.jpg")
 
 """
 Returns a relevant structure embedding train images described according to the 
@@ -84,13 +141,12 @@ def load_transform_label_train_dataset(directory, representation):
     for folder in os.listdir(directory) : 
         labelname = os.path.splitext(folder)[0]
 
-        
         folder_path = directory+"" + labelname
 
         if labelname == 'Mer' :
-            label = 1
+            label = "+1"
         else :
-            label = -1
+            label = "-1"
 
 
         for images in os.listdir(folder_path):
@@ -127,7 +183,7 @@ def load_transform_test_dataset(directory, representation):
     for images in os.listdir(directory):
             
             images_path = directory + "/" + images
-            images_name = os.path.splitext(images)[0]
+            images_name = os.path.splitext(images)[0]+os.path.splitext(images)[1]
             images_representation = raw_image_to_representation(images_path,representation)
             images_label = None
             image = Image2(images_name,images_representation,images_label)
@@ -181,7 +237,7 @@ output = the label of that one data (+1 or -1)
 -- uses the model learned by function learn_model_from_dataset
 """
 def predict_example_label(example, model):
-    return model.predict(example)
+    return model.predict(np.array([example.representation[:TRESHOLD]]))
 
 
 """
@@ -214,7 +270,7 @@ def write_predictions(directory, filename, predictions,algo_dico):
     file = open(f"{directory}/{filename}",'w')
     file.write(str(algo_dico)+'\n')
     for prediction in predictions:
-        file.writelines(f"{prediction[0]} {prediction[1]}\n")
+        file.writelines(f"{prediction[0]} {prediction[1][0]}\n")
     file.close()
     print("OK")
 
@@ -247,6 +303,51 @@ def estimate_model_score(train_dataset, algo_dico, k):
     train_data = [Image2(name_train[i],X_train[i],y_train[i]) for i in range (len(X_train))]
     test_data = [Image2(name_test[i],X_test[i],y_test[i]) for i in range (len(X_test))]
     Y_predictions =[y[1][0] for y in  predict_sample_label(test_data,learn_model_from_dataset(train_data, algo_dico)[0])]
+  
+    score = accuracy_score(y_test, Y_predictions)
+
+    return score
+
+
+def get_predictions_from_vote(test_data,algo_dicos,train_data):
+    models = []
+    for algo_dico in algo_dicos:
+        models.append(learn_model_from_dataset(train_data,algo_dico)[0])
+
+
+    predictions=[]
+    for example in test_data :
+        model_predections=[]
+        for model in models:
+            model_predections.append(predict_example_label(example,model))
+
+        predictions.append((example,most_frequent(model_predections)))
+        
+    return predictions
+        
+def most_frequent(List):
+    unique, counts = np.unique(List, return_counts=True)
+    index = np.argmax(counts)
+    return unique[index]     
+
+
+def estimate_model_score_voting(train_dataset, algo_dicos, k):
+
+    X_testset =  []
+    Y_testset = []
+    nameset =[]
+
+    for image in train_dataset:
+        
+        X_testset.append(image.representation)
+        Y_testset.append(image.label)
+        nameset.append(image.name)
+
+    X_train, X_test, y_train, y_test, name_train, name_test = train_test_split(X_testset, Y_testset,  nameset, test_size=1/k)
+
+    train_data = [Image2(name_train[i],X_train[i],y_train[i]) for i in range (len(X_train))]
+    test_data = [Image2(name_test[i],X_test[i],y_test[i]) for i in range (len(X_test))]
+    Y_predictions =[y[1][0] for y in  get_predictions_from_vote(test_data,algo_dicos,train_dataset)]
   
     score = accuracy_score(y_test, Y_predictions)
 
